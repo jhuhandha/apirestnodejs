@@ -1,4 +1,4 @@
-var mongoose = require('mongoose');
+const mongoose = require('mongoose');
 
 var Schema = mongoose.Schema;
 
@@ -26,6 +26,11 @@ var usuarioSchema = new Schema({
     clave : {
         type: String,
         required: true
+    },
+    estado : {
+        type: Boolean,
+        required: false,
+        default: true
     },
     created_at :{
         type: Date,

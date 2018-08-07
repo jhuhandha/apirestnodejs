@@ -3,8 +3,12 @@ require('./config/config');
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+const fileUpload = require('express-fileupload');
 
 const app = express();
+
+// default options
+app.use(fileUpload());
 
 app.use(function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
@@ -16,7 +20,7 @@ app.use(function (req, res, next) {
 
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({
-    extended: false
+    extended: true
 }));
 // parse application/json
 app.use(bodyParser.json());

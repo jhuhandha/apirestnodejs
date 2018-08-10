@@ -26,7 +26,7 @@ app.use(bodyParser.urlencoded({
 app.use(bodyParser.json());
 
 app.get('/', function (req, res) {
-    res.send('Bienvenido al API REST del SENA');
+    res.send('Bienvenido API REST del SENA');
 });
 
 app.use(require("./routes/indexRoutes"));

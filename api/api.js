@@ -31,7 +31,7 @@ app.get('/', function (req, res) {
 
 app.use(require("./routes/indexRoutes"));
 
-mongoose.connect('mongodb://localhost:27017/tienda', (err) => {
+mongoose.connect(process.env.MONGOURL, (err) => {
     if (err) {
         console.log(err);
     }

@@ -4,7 +4,7 @@ let Schema = mongoose.Schema;
 
 let clienteSchema = new Schema({
     nombre : String,
-    direccion : Number,
+    direccion : String,
     telefono : String
 });
 

@@ -13,10 +13,12 @@ let ventaSchema = new Schema({
         ref : "Cliente"
     },
     productos : [{
-        producto : {
+        productos : {
             type: Schema.Types.ObjectId,
             ref : "Producto"
         },
         cantidad : Number
     }]
 });
+
+module.exports = mongoose.model("Venta", ventaSchema);

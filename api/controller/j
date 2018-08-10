@@ -1,0 +1,83 @@
+const Venta = require("./../models/ventaModels");
+const Producto = require("./../models/productoModels");
+
+let guardar = async (req, res) => {
+
+    let body = req.body;
+
+    let venta = new Venta({
+        valor_total: body.total,
+        cliente: body.cliente
+    });
+    
+
+    validar_cantidad(body.productos_detalle, (respuesta) => {
+
+        if (respuesta) {
+            venta.productos= respuesta;
+
+            venta.save((err, ventaNew) => {
+
+                if (err)
+                    return res.json({
+                        ok: false,
+                        err
+                    });
+
+                res.json({
+                    ok: true,
+                    ventaNew
+                });
+            })
+        }
+
+
+    });
+
+
+}
+
+let validar_cantidad = (productos, callback) => {
+
+    productos_id = [];
+
+    productos.forEach(element => {
+        productos_id.push(element.producto_id);
+    });
+
+    // console.log(productos_id);
+
+    Producto.find({})
+    .where("_id").in(productos_id)
+    .exec((err, data) => {
+
+        respuesta = [];
+
+        data.forEach(element=>{
+
+            let cantidad = productos.find(e => e.producto_id == element._id).cantidad;
+
+            if (cantidad <= element.cantidad) {
+
+                respuesta.push({
+                    productos: element._id,
+                    cantidad: cantidad
+                });
+
+            }
+
+        })
+        callback(respuesta.length==0?false:respuesta);
+    })
+}
+
+let listar = (req, res) => {
+    Venta.find({}).populate("productos.productos").exec((err, data) => {
+        res.json(data);
+    });
+}
+
+module.exports = {
+    guardar,
+    listar
+}

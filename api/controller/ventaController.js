@@ -13,7 +13,7 @@ let guardar = async (req, res) => {
                 mensaje: "No hay productos para guardar"
             });
 
-        
+
         let venta = new Venta({
             valor_total: body.total,
             cliente: body.cliente,
@@ -38,53 +38,52 @@ let guardar = async (req, res) => {
 
 }
 
-let validar_cantidad = async  (productos, callback) => {
+let validar_cantidad = async (productos, callback) => {
 
     let productos_id = [];
     productos.forEach(element => {
         productos_id.push(element.producto_id);
     });
 
+    let respuesta = [];
+
     Producto.find({})
         .where("_id").in(productos_id)
-        .exec((err, data) => {
+        .exec(async (err, data) => {
 
-            let respuesta = [];
+            for(let i = 0; i < data.length; i++){
 
-            data.forEach(e => {
+                let cantidad = productos.find(p => p.producto_id == data[i]._id).cantidad;
 
-                let cantidad = productos.find(p => p.producto_id == e._id).cantidad;
+                if (cantidad <= data[i].cantidad) {
 
-                if (cantidad <= e.cantidad) {
+                    cantidad_nueva = data[i].cantidad - cantidad;
 
-                    cantidad_nueva = e.cantidad - cantidad;
+                    let modifico = await Producto.findByIdAndUpdate(data[i]._id, {
+                        cantidad: cantidad_nueva
+                    });
 
-                    // let modifico = await Producto.findByIdAndUpdate(e._id, {
-                    //     cantidad: cantidad_nueva
-                    // });
-
-                    // if(modifico != false){
+                    if (modifico != false) {
                         respuesta.push({
-                            productos: e._id,
+                            productos: data[i]._id,
                             cantidad: cantidad
                         });
-                    // }
-
-                    console.log(respuesta);
+                    }
                 }
-            })
-            
+            }
+
             callback(respuesta.length == 0 ? false : respuesta);
+
         })
 }
 
 let listar = (req, res) => {
     Venta.find({})
-    .populate("cliente")
-    .populate("productos.productos")
-    .exec((err, data) => {
-        res.json(data);
-    });
+        .populate("cliente")
+        .populate("productos.productos")
+        .exec((err, data) => {
+            res.json(data);
+        });
 }
 
 module.exports = {
